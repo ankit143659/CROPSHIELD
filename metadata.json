@@ -1,0 +1,8 @@
+{
+  "name": "CropShield",
+  "description": "Professional crop protection, disease diagnosis, and seasonal automation system.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
