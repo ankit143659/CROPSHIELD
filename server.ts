@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 
-dotenv.config({ path: '.env.local' });
+dotenv.config();
 
 async function startServer() {
   const app = express();
@@ -14,14 +14,17 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
+  const SMTP_USER = process.env.SMTP_USER || 'ankitsingh14175@gmail.com';
+  const SMTP_PASS = process.env.SMTP_PASS || 'zisnkydbqysbyifr';
+
   // Configure SMTP transporter
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: parseInt(process.env.SMTP_PORT || '587'),
     secure: process.env.SMTP_PORT === '465', // true for 465, false for other ports
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
+      user: SMTP_USER,
+      pass: SMTP_PASS
     },
     tls: {
       rejectUnauthorized: false
@@ -45,7 +48,7 @@ async function startServer() {
     try {
       const { email, name } = req.body;
       
-      if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      if (!SMTP_USER || !SMTP_PASS) {
         return res.status(500).json({ success: false, error: 'SMTP credentials not configured.' });
       }
 
@@ -56,7 +59,7 @@ async function startServer() {
       const mailOptions = {
         from: {
           name: 'CropShield Intelligence',
-          address: process.env.SMTP_USER
+          address: SMTP_USER
         },
         to: email,
         subject: 'Secure Access Code - CropShield',
@@ -122,14 +125,14 @@ async function startServer() {
     try {
       const { email, season } = req.body;
       
-      if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      if (!SMTP_USER || !SMTP_PASS) {
         return res.status(500).json({ success: false, error: 'SMTP credentials not configured.' });
       }
 
       const mailOptions = {
         from: {
           name: 'CropShield Automation',
-          address: process.env.SMTP_USER
+          address: SMTP_USER
         },
         to: email,
         subject: `CropShield: ${season} Season Alerts Activated`,
